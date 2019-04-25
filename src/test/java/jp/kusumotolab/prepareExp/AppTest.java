@@ -4,11 +4,19 @@
 package jp.kusumotolab.prepareExp;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AppTest {
-    @Test public void testAppHasAGreeting() {
-        App classUnderTest = new App();
-        assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+    @Test
+    public void test() throws IOException {
+        final Path sample = Paths.get("sample");
+        final List<Path> paths = App.getAllJavaPath(sample);
+        assertThat(paths).hasSize(2);
     }
 }

@@ -3,12 +3,53 @@
  */
 package jp.kusumotolab.prepareExp;
 
+import jp.kusumotolab.prepareExp.visitor.InitializeVisitor;
+import jp.kusumotolab.prepareExp.visitor.ModifyModifierVisitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.TextEdit;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
+    public static void main(final String[] args) throws IOException {
+        final ASTVisitor visitor = args[1].equals("0") ? new InitializeVisitor() : new ModifyModifierVisitor();
+        getAllJavaPath(Paths.get(args[0])).forEach(e -> {
+            final ASTParser astParser = ASTParser.newParser(AST.JLS11);
+            byte[] bytes = null;
+
+            try {
+                bytes = Files.readAllBytes(e);
+            } catch (IOException e1) {
+                System.exit(1);
+            }
+
+            final String string = new String(bytes, StandardCharsets.UTF_8);
+            astParser.setSource(string.toCharArray());
+            final CompilationUnit unit = (CompilationUnit) astParser.createAST(new NullProgressMonitor());
+            unit.accept(visitor);
+
+            final Document document = new Document(string);
+            final TextEdit textEdit = unit.rewrite(document, null);
+
+            try {
+                textEdit.apply(document);
+            } catch (BadLocationException e1) {
+                System.exit(2);
+            }
+        });
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    public static List<Path> getAllJavaPath(final Path directory) throws IOException {
+        return Files.walk(directory).filter(e -> e.toString().endsWith(".java"))
+                .collect(Collectors.toList());
     }
 }
