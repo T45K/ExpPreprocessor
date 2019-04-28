@@ -14,6 +14,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,11 +46,17 @@ public class App {
 
             try {
                 textEdit.apply(document);
-            } catch (BadLocationException e1) {
+            } catch (final BadLocationException e1) {
                 System.exit(2);
             }
 
             final String newContent = document.get();
+
+            try (final BufferedWriter bufferedWriter = Files.newBufferedWriter(e)) {
+                bufferedWriter.write(newContent);
+            } catch (final IOException error) {
+                System.exit(1);
+            }
         });
     }
 
