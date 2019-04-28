@@ -6,7 +6,10 @@ package jp.kusumotolab.prepareExp;
 import jp.kusumotolab.prepareExp.visitor.InitializeVisitor;
 import jp.kusumotolab.prepareExp.visitor.ModifyModifierVisitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
@@ -32,12 +35,12 @@ public class App {
                 System.exit(1);
             }
 
-            final String string = new String(bytes, StandardCharsets.UTF_8);
-            astParser.setSource(string.toCharArray());
+            final String oldeContent = new String(bytes, StandardCharsets.UTF_8);
+            astParser.setSource(oldeContent.toCharArray());
             final CompilationUnit unit = (CompilationUnit) astParser.createAST(new NullProgressMonitor());
             unit.accept(visitor);
 
-            final Document document = new Document(string);
+            final Document document = new Document(oldeContent);
             final TextEdit textEdit = unit.rewrite(document, null);
 
             try {
@@ -45,6 +48,8 @@ public class App {
             } catch (BadLocationException e1) {
                 System.exit(2);
             }
+
+            final String newContent = document.get();
         });
     }
 
