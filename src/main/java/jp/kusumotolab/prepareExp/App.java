@@ -3,7 +3,7 @@
  */
 package jp.kusumotolab.prepareExp;
 
-import jp.kusumotolab.prepareExp.visitor.InitializeVisitor;
+import jp.kusumotolab.prepareExp.visitor.VariableInitializeVisitor;
 import jp.kusumotolab.prepareExp.visitor.ModifyModifierVisitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
@@ -14,7 +14,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class App {
     public static void main(final String[] args) throws IOException {
-        final ASTVisitor visitor = args[1].equals("0") ? new InitializeVisitor() : new ModifyModifierVisitor();
+        final ASTVisitor visitor = args[1].equals("0") ? new VariableInitializeVisitor() : new ModifyModifierVisitor();
         getAllJavaPath(Paths.get(args[0])).forEach(e -> {
             final ASTParser astParser = ASTParser.newParser(AST.JLS11);
             byte[] bytes = null;
@@ -39,6 +38,7 @@ public class App {
             final String oldContent = new String(bytes, StandardCharsets.UTF_8);
             astParser.setSource(oldContent.toCharArray());
             final CompilationUnit unit = (CompilationUnit) astParser.createAST(new NullProgressMonitor());
+            unit.recordModifications();
             unit.accept(visitor);
 
             final Document document = new Document(oldContent);

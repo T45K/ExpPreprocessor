@@ -17,6 +17,12 @@ public class AppTest {
     public void test() throws IOException {
         final Path sample = Paths.get("sample");
         final List<Path> paths = App.getAllJavaPath(sample);
-        assertThat(paths).hasSize(2);
+        assertThat(paths).hasSize(3);
+    }
+
+    @Test
+    public void testApply() throws IOException {
+        final String[] args = {"sample/apply", "0"};
+        App.main(args);
     }
 }
