@@ -13,20 +13,20 @@ public class InitializeVisitor extends ASTVisitor {
         for (final Object object : node.fragments()) {
             final VariableDeclarationFragment fragment = (VariableDeclarationFragment) object;
             if (fragment.getInitializer() == null) {
-                if(Modifier.isFinal(node.getModifiers())){
+                if (Modifier.isFinal(node.getModifiers())) {
                     node.modifiers().remove(Modifier.ModifierKeyword.FINAL_KEYWORD);
                 }
             }
 
             final Type type = node.getType();
-            if(type instanceof PrimitiveType){
-                if(type.toString().endsWith("boolean")){
+            if (type instanceof PrimitiveType) {
+                if (type.toString().endsWith("boolean")) {
                     fragment.setInitializer(node.getAST().newBooleanLiteral(false));
-                }else {
+                } else {
                     fragment.setInitializer((node.getAST().newNumberLiteral("0")));
 
                 }
-            }else{
+            } else {
                 fragment.setInitializer(node.getAST().newNullLiteral());
             }
         }
