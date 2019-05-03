@@ -36,12 +36,12 @@ public class App {
                 System.exit(1);
             }
 
-            final String oldeContent = new String(bytes, StandardCharsets.UTF_8);
-            astParser.setSource(oldeContent.toCharArray());
+            final String oldContent = new String(bytes, StandardCharsets.UTF_8);
+            astParser.setSource(oldContent.toCharArray());
             final CompilationUnit unit = (CompilationUnit) astParser.createAST(new NullProgressMonitor());
             unit.accept(visitor);
 
-            final Document document = new Document(oldeContent);
+            final Document document = new Document(oldContent);
             final TextEdit textEdit = unit.rewrite(document, null);
 
             try {
