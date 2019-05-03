@@ -52,10 +52,10 @@ public class App {
 
             final String newContent = document.get();
 
-            try (final BufferedWriter bufferedWriter = Files.newBufferedWriter(e)) {
-                bufferedWriter.write(newContent);
-            } catch (final IOException error) {
-                System.exit(1);
+            try {
+                Files.write(e, newContent.getBytes(StandardCharsets.UTF_8));
+            } catch (final IOException e1) {
+                e1.printStackTrace();
             }
         });
     }
