@@ -1,6 +1,7 @@
 package jp.kusumotolab.prepareExp.visitor;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -8,6 +9,16 @@ import org.eclipse.jdt.core.dom.Modifier;
 import java.util.Iterator;
 
 public class ModifyModifierVisitor extends ASTVisitor {
+
+    @Override
+    public boolean visit(final EnumDeclaration node) {
+        return false;
+    }
+
+    @Override
+    public boolean visit(final EnumConstantDeclaration node) {
+        return false;
+    }
 
     @Override
     public boolean visit(final MethodDeclaration node) {
