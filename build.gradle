@@ -34,5 +34,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+run {
+    if (project.hasProperty('args')) {
+        args project.args.split('\\s+')
+    }
+}
+
+
 // Define the main class for the application
 mainClassName = 'jp.kusumotolab.prepareExp.App'
